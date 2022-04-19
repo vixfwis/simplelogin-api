@@ -1,16 +1,9 @@
-from simplelogin.definitions import data as ddefs, EndpointParams, Endpoint
 from schematics import types
 
-# ================================================================
-
-class GetUser(Endpoint):
-    method = types.StringType(default='GET')
-    url = types.StringType(default='/api/user_info')
-    status_code = types.IntType(default=200)
-    rsp_type = ddefs.UserInfo
+import simplelogin.definitions.data.alias
+from simplelogin.definitions import EndpointParams, Endpoint, data as ddefs
 
 # ================================================================
-
 class GetAliasOptionsQuery(EndpointParams):
     hostname = types.StringType()
 
@@ -19,10 +12,9 @@ class GetAliasOptions(Endpoint):
     url = types.StringType(default='/api/v5/alias/options')
     status_code = types.IntType(default=200)
     query_type = GetAliasOptionsQuery
-    rsp_type = ddefs.AliasOptions
+    rsp_type = simplelogin.definitions.data.alias.AliasOptions
 
 # ================================================================
-
 class GetAliasListQuery(EndpointParams):
     page_id = types.IntType(default=0)
     pinned = types.BooleanType()
@@ -32,10 +24,9 @@ class GetAliasList(Endpoint):
     url = types.StringType(default='/api/v2/aliases')
     status_code = types.IntType(default=200)
     query_type = GetAliasListQuery
-    rsp_type = ddefs.AliasInfoList
+    rsp_type = simplelogin.definitions.data.alias.AliasInfoList
 
 # ================================================================
-
 class CreateRandomAliasQuery(EndpointParams):
     hostname = types.StringType()
     mode = types.StringType(choices=['uuid', 'word'])
@@ -49,10 +40,9 @@ class CreateRandomAlias(Endpoint):
     status_code = types.IntType(default=201)
     query_type = CreateRandomAliasQuery
     data_type = CreateRandomAliasData
-    rsp_type = ddefs.AliasInfo
+    rsp_type = simplelogin.definitions.data.alias.AliasInfo
 
 # ================================================================
-
 class CreateCustomAliasQuery(EndpointParams):
     hostname = types.StringType()
 
@@ -69,10 +59,9 @@ class CreateCustomAlias(Endpoint):
     status_code = types.IntType(default=201)
     query_type = CreateCustomAliasQuery
     data_type = CreateCustomAliasData
-    rsp_type = ddefs.AliasInfo
+    rsp_type = simplelogin.definitions.data.alias.AliasInfo
 
 # ================================================================
-
 class GetAlias(Endpoint):
     def __post_init__(self, *args, **kwargs):
         self.url = self.url.format(self.alias_id)
@@ -80,10 +69,9 @@ class GetAlias(Endpoint):
     method = types.StringType(default='GET')
     url = types.StringType(default='/api/aliases/{}')
     status_code = types.IntType(default=200)
-    rsp_type = ddefs.AliasInfo
+    rsp_type = simplelogin.definitions.data.alias.AliasInfo
 
 # ================================================================
-
 class UpdateAliasData(EndpointParams):
     note = types.StringType()
     mailbox_id = types.IntType()
@@ -102,7 +90,6 @@ class UpdateAlias(Endpoint):
     data_type = UpdateAliasData
 
 # ================================================================
-
 class ToggleAlias(Endpoint):
     def __post_init__(self, *args, **kwargs):
         self.url = self.url.format(self.alias_id)
@@ -110,10 +97,9 @@ class ToggleAlias(Endpoint):
     method = types.StringType(default='POST')
     url = types.StringType(default='/api/aliases/{}/toggle')
     status_code = types.IntType(default=200)
-    rsp_type = ddefs.ToggleAlias
+    rsp_type = simplelogin.definitions.data.alias.ToggleAlias
 
 # ================================================================
-
 class DeleteAlias(Endpoint):
     def __post_init__(self, *args, **kwargs):
         self.url = self.url.format(self.alias_id)
@@ -121,4 +107,4 @@ class DeleteAlias(Endpoint):
     method = types.StringType(default='DELETE')
     url = types.StringType(default='/api/aliases/{}')
     status_code = types.IntType(default=200)
-    rsp_type = ddefs.DeleteAlias
+    rsp_type = simplelogin.definitions.data.alias.DeleteAlias
