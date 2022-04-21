@@ -52,3 +52,29 @@ class DeleteAlias(Model):
 
 class ToggleAlias(Model):
     enabled = types.BooleanType()
+
+class AliasActivity(Model):
+    action = types.StringType()
+    from_ = types.StringType(serialized_name='from')
+    timestamp = types.TimestampType()
+    to = types.StringType()
+    reverse_alias = types.StringType()
+    reverse_alias_address = types.EmailType()
+
+class AliasActivityList(Model):
+    activities = types.ListType(types.ModelType(AliasActivity))
+
+class AliasContact(Model):
+    id = types.IntType()
+    contact = types.StringType()
+    creation_date = types.DateTimeType()
+    creation_timestamp = types.TimestampType()
+    last_email_sent_date = types.DateTimeType()
+    last_email_sent_timestamp = types.TimestampType()
+    existed = types.BooleanType()
+    reverse_alias = types.StringType()
+    reverse_alias_address = types.EmailType()
+    block_forward = types.BooleanType()
+
+class AliasContactList(Model):
+    contacts = types.ListType(types.ModelType(AliasContact))

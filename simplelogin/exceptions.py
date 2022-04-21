@@ -12,5 +12,11 @@ class BaseError(Exception):
 class APIError(BaseError):
     pass
 
-class ClientError(BaseError):
+class ValidationError(BaseError):
     pass
+
+class ClientError(BaseError):
+    def __init__(self, msg, status_code: int, data):
+        super().__init__(msg)
+        self.status_code = status_code
+        self.data = data

@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='simplelogin-api',
+    version='0.1.0',
     packages=find_packages(),
     install_requires=[
         'attrs==21.4.0',

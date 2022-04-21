@@ -28,14 +28,17 @@ class BaseClient:
         params = self._validate_dict_params(ep.query_type, params)
         data = self._validate_dict_params(ep.data_type, data)
         rsp = self._make_request_impl(ep.method, urljoin(base_url, ep.url), params, data, self._headers)
-        if rsp.status_code != ep.status_code:
+        if rsp.status_code not in ep.status_code:
             if 200 <= rsp.status_code <= 299:
                 self.logger.warning(
                     f'unexpected success status code from ep {ep.url}: '
                     f'got {rsp.status_code}, expected {ep.status_code}'
                 )
             else:
-                raise exc.ClientError(f'endpoint {ep.url} responded with HTTP {rsp.status_code}: {rsp.data}')
+                raise exc.ClientError(
+                    f'endpoint <{ep.method} {ep.url}> responded with HTTP {rsp.status_code}: {rsp.data}',
+                    status_code=rsp.status_code,
+                    data=rsp.data)
         self.logger.debug(f'ep: {ep}')
         self.logger.debug(f'params: {params}')
         self.logger.debug(f'data: {data}')
@@ -45,17 +48,17 @@ class BaseClient:
                 model = ep.rsp_type(rsp.data)
                 return model
             except SchematicsError as e:
-                raise exc.ClientError(f'error validating response from {ep.url}: {e}')
+                raise exc.ValidationError(f'error validating response from {ep.url}: {e}')
 
     def _validate_dict_params(self, model: typing.Type[Model], params: dict):
         if params is not None:
             if model is None:
-                raise exc.ClientError('params passed to undefined model')
+                raise exc.ValidationError('params passed to undefined model')
             try:
                 params_model = model(params)
                 return params_model.to_native()
             except SchematicsError as e:
-                raise exc.ClientError(f'error validating params for {model}: {e} with params: {params}')
+                raise exc.ValidationError(f'error validating params for {model}: {e} with params: {params}')
         return None
 
     @abstractmethod
@@ -73,5 +76,7 @@ class Client(BaseClient):
             headers=headers,
         )
         if r.headers['Content-Type'] != 'application/json':
-            raise exc.ClientError(f'expected Content-Type: application/json, got: {r.headers["Content-Type"]}')
+            raise exc.ClientError(f'expected Content-Type: application/json, got: {r.headers["Content-Type"]}',
+                                  status_code=r.status_code,
+                                  data=r.content)
         return ResponseInfo(status_code=r.status_code, data=r.json())

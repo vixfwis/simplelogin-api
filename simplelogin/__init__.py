@@ -2,10 +2,12 @@ from simplelogin.client import BaseClient
 from simplelogin import exceptions as exc
 from simplelogin.definitions.data import \
     account as d_account, \
-    alias as d_alias
+    alias as d_alias, \
+    mailbox as d_mailbox
 from simplelogin.definitions.endpoints import \
     account as ep_account, \
-    alias as ep_alias
+    alias as ep_alias, \
+    mailbox as ep_mailbox
 
 
 class SimpleLoginApi:
@@ -87,3 +89,44 @@ class SimpleLoginApi:
 
     def toggle_alias(self, alias_id: int) -> d_alias.ToggleAlias:
         return self._client.make_request(self._base_url, ep_alias.ToggleAlias({'alias_id': alias_id}))
+
+    def get_alias_activity_list(self, alias_id: int, page: int) -> d_alias.AliasActivityList:
+        params = {
+            'page_id': page,
+        }
+        return self._client.make_request(
+            self._base_url,
+            ep_alias.GetAliasActivityList({'alias_id': alias_id}),
+            params=params
+        )
+
+    def get_alias_contact_list(self, alias_id: int, page: int) -> d_alias.AliasContactList:
+        params = {
+            'page_id': page,
+        }
+        return self._client.make_request(
+            self._base_url,
+            ep_alias.GetAliasContactList({'alias_id': alias_id}),
+            params=params
+        )
+
+    def create_contact(self,
+                       alias_id: int,
+                       contact_email: str,
+                       first_name: str = '',
+                       last_name: str = '') -> d_alias.AliasContact:
+        data = {
+            'contact': contact_email
+        }
+        if first_name or last_name:
+            name = [first_name, last_name]
+            name = ' '.join(name)
+            data['contact'] = f'{name} <{data["contact"]}>'
+        return self._client.make_request(
+            self._base_url,
+            ep_alias.CreateAliasContact({'alias_id': alias_id}),
+            data=data
+        )
+
+    def get_mailbox_list(self) -> d_mailbox.MailboxList:
+        return self._client.make_request(self._base_url, ep_mailbox.GetMailboxList())
