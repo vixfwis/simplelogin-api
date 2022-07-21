@@ -8,3 +8,4 @@ class UserInfo(Model):
     email = types.EmailType()
     in_trial = types.BooleanType()
     profile_picture_url = types.URLType()
+    max_alias_free_plan = types.IntType()

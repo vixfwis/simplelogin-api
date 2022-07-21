@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='simplelogin-api',
-    version='0.1.0',
+    version='0.1.1',
     author="vixfwis",
     description="SimpleLogin API wrapper",
     long_description=long_description,
